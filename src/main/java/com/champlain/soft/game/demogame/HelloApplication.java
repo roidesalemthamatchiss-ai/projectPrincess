@@ -3,6 +3,8 @@ package com.champlain.soft.game.demogame;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -12,7 +14,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
+
 import java.io.IOException;
+import java.util.Random;
 
 public class HelloApplication extends Application {
 
@@ -22,22 +26,33 @@ public class HelloApplication extends Application {
 
 
     // 🔹 Grid constants
+    private static final int SCENE_WIDTH = 100;
+    private static final int SCENE_HEIGHT = 100;
     private static final int ROWS = 10;
     private static final int COLS = 10;
+    private static final int CELL_WIDTH = 800;
+    private static final int CELL_HEIGHT = 800;
 
     enum CellType {
         GRASS, PLAYER, PRINCESS, BOMB, WALL
     }
+    private Image grassImage;
+    private Image playerImage;
+    private Image princessImage;
+    private Image bombImage;
+    private Image wallImage;
 
     // 🔹 Use "matrix" instead of "map"
     private CellType[][] matrix = new CellType[ROWS][COLS];
+    private final Random random = new Random();
+
 
     @Override
     public void start(Stage stage) {
 
         initMatrix();
-
         GridPane grid = new GridPane();
+        loadImages();
         drawBoard(grid);
 
         BorderPane root = new BorderPane();
@@ -48,6 +63,14 @@ public class HelloApplication extends Application {
         stage.setTitle("Rescue the Princess");
         stage.setScene(scene);
         stage.show();
+    }
+
+    private void loadImages() {
+        grassImage = new Image(getClass().getResource("images/grass.png").toExternalForm());
+        playerImage = new Image(getClass().getResource("images/player.png").toExternalForm());
+        princessImage = new Image(getClass().getResource("images/princess.png").toExternalForm());
+        bombImage = new Image(getClass().getResource("images/bomb.png").toExternalForm());
+        wallImage = new Image(getClass().getResource("images/wall.png").toExternalForm());
     }
 
     private void initMatrix() {
@@ -72,29 +95,36 @@ public class HelloApplication extends Application {
             for (int col = 0; col < COLS; col++) {
 
                 StackPane cell = new StackPane();
-                cell.setPrefSize(800, 800);
+                cell.setPrefSize(CELL_WIDTH, CELL_HEIGHT);
                 cell.setStyle("-fx-border-color: black; -fx-background-color: beige;");
 
-                Label label = new Label();
+                //Label label = new Label();
 
-                if(matrix[row][col] == CellType.PLAYER ) {
-                    label.setText("🧍");
-                }else if(matrix[row][col] == CellType.PRINCESS ) {
-                    label.setText("👸");
+                Image entityImage = null;
+                if(matrix[row][col] == CellType.PLAYER ) entityImage = playerImage;
+                else if(matrix[row][col] == CellType.PRINCESS ) {
+                    entityImage = princessImage;
                 }else if(matrix[row][col] == CellType.BOMB){
-                    label.setText("💣");
+                    entityImage = bombImage;
                 }else if(matrix[row][col] == CellType.WALL){
-                    label.setText("x");
-                    cell.setStyle("-fx-border-color: black; -fx-background-color: gray;");
-                }else{
-                    label.setText("");
+                    entityImage = wallImage;
+                    cell.getChildren().clear();
+                }
+                if (entityImage != null) {
+                    cell.getChildren().add(createImageView(entityImage));
                 }
 
-                cell.getChildren().add(label);
                 grid.add(cell, col, row);
             }
+
         }
     }
 
-
+    private ImageView createImageView(Image image) {
+        ImageView imageView = new ImageView(image);
+        imageView.setFitWidth(SCENE_WIDTH);
+        imageView.setFitHeight(SCENE_HEIGHT);
+        imageView.setPreserveRatio(false);
+        return imageView;
+    }
 }

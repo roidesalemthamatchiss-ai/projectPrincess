@@ -26,12 +26,12 @@ public class HelloApplication extends Application {
 
 
     // 🔹 Grid constants
-    private static final int SCENE_WIDTH = 100;
-    private static final int SCENE_HEIGHT = 100;
+    private static final int SCENE_WIDTH = 90;
+    private static final int SCENE_HEIGHT = 90;
     private static final int ROWS = 10;
     private static final int COLS = 10;
-    private static final int CELL_WIDTH = 800;
-    private static final int CELL_HEIGHT = 800;
+    private static final int CELL_WIDTH = 90;
+    private static final int CELL_HEIGHT = 90;
 
     enum CellType {
         GRASS, PLAYER, PRINCESS, BOMB, WALL
@@ -58,7 +58,7 @@ public class HelloApplication extends Application {
         BorderPane root = new BorderPane();
         root.setCenter(grid);
 
-        Scene scene = new Scene(root, 100,100);
+        Scene scene = new Scene(root, 90,90);
 
         stage.setTitle("Rescue the Princess");
         stage.setScene(scene);
@@ -80,12 +80,16 @@ public class HelloApplication extends Application {
             }
         }
 
-        // Sample objects
-        matrix[0][0] = CellType.PLAYER;
-        matrix[9][9] = CellType.PRINCESS;
+        for (int i = 0; i < ROWS; i++) {
+            matrix[0][i] = CellType.WALL;
+            matrix[ROWS - 1][i] = CellType.WALL;
+            matrix[i][0] = CellType.WALL;
+            matrix[i][COLS - 1] = CellType.WALL;
+        }
+
+        matrix[1][1] = CellType.PLAYER;
+        matrix[8][8] = CellType.PRINCESS;
         matrix[4][5] = CellType.BOMB;
-        matrix[1][1] = CellType.WALL;
-        matrix[1][2] = CellType.WALL;
     }
 
     private void drawBoard(GridPane grid) {
@@ -97,6 +101,11 @@ public class HelloApplication extends Application {
                 StackPane cell = new StackPane();
                 cell.setPrefSize(CELL_WIDTH, CELL_HEIGHT);
                 cell.setStyle("-fx-border-color: black; -fx-background-color: beige;");
+
+                ImageView grass = new ImageView(grassImage);
+                grass.setFitWidth(CELL_WIDTH);
+                grass.setFitHeight(CELL_HEIGHT);
+                cell.getChildren().add(grass);
 
                 //Label label = new Label();
 
